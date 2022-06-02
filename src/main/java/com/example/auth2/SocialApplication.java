@@ -32,11 +32,9 @@ import java.util.Map;
 
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
-
 @SpringBootApplication
 @RestController
 public class SocialApplication extends WebSecurityConfigurerAdapter {
-
 
     @GetMapping("/user")
     @ResponseBody
@@ -54,8 +52,8 @@ public class SocialApplication extends WebSecurityConfigurerAdapter {
 
     @Bean
     public WebClient rest(ClientRegistrationRepository clients, OAuth2AuthorizedClientRepository authz) {
-        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
-                new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, authz);
+        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 = new ServletOAuth2AuthorizedClientExchangeFilterFunction(
+                clients, authz);
         return WebClient.builder()
                 .filter(oauth2).build();
     }
@@ -69,8 +67,8 @@ public class SocialApplication extends WebSecurityConfigurerAdapter {
                 return user;
             }
 
-            OAuth2AuthorizedClient client = new OAuth2AuthorizedClient
-                    (request.getClientRegistration(), user.getName(), request.getAccessToken());
+            OAuth2AuthorizedClient client = new OAuth2AuthorizedClient(request.getClientRegistration(), user.getName(),
+                    request.getAccessToken());
             String url = user.getAttribute("organizations_url");
             List<Map<String, Object>> orgs = rest
                     .get().uri(url)
@@ -120,56 +118,4 @@ public class SocialApplication extends WebSecurityConfigurerAdapter {
 
 }
 
-
-    
-
-//     @Override
-//     protected void configure(HttpSecurity http) throws Exception {
-
-//         SimpleUrlAuthenticationFailureHandler handler = new SimpleUrlAuthenticationFailureHandler("/");
-
-        
-//     	// @formatter:off
-//         http.antMatcher("/**")
-
-//             .authorizeRequests(a -> a
-//                 .antMatchers("/", "/error", "/webjars/**").permitAll()
-//                 .anyRequest().authenticated()
-//             )
-//             .exceptionHandling(e -> e
-//                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-//             )
-
-//             .csrf(c -> c
-//             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-
-//             )
-//                 .logout(l -> l
-//             .logoutSuccessUrl("/").permitAll()
-
-//                 )
-
-//             .oauth2Login(o -> o
-//             .failureHandler((request, response, exception) -> {
-// 			    request.getSession().setAttribute("error.message", exception.getMessage());
-// 			    // handler.onAuthenticationFailure(request, response, exception);
-//             })
-//         );
-//                 // @formatter:on
-// }
-     
-//      @GetMapping("/error")
-//     public String error(HttpServletRequest request) {
-// 	String message = (String) request.getSession().getAttribute("error.message");
-// 	request.getSession().removeAttribute("error.message");
-// 	return message;
-// }
-
-// @Bean
-// public WebClient rest(ClientRegistrationRepository clients, OAuth2AuthorizedClientRepository authz) {
-//     ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
-//             new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, authz);
-//     return WebClient.builder()
-//             .filter(oauth2).build();
-// }
 
